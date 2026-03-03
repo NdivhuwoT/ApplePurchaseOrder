@@ -30,25 +30,29 @@ public class LoginPage {
     @FindBy(id = "login-password")
     WebElement PasswordField;
 
-    @FindBy(id = "login-button")
+    @FindBy(id = "login-submit")
     WebElement LoginSubmitButton;
 
     @FindBy(xpath = "//span[text() = 'My Learning']")
     WebElement MyLearningButton;
 
     public void clickLoginButton() {
+        wait.until(ExpectedConditions.elementToBeClickable(LoginButton));
         LoginButton.click();
     }
 
     public void enterEmail(String email) {
+        wait.until(ExpectedConditions.visibilityOf(EmailField));
         EmailField.sendKeys(email);
     }
 
     public void enterPassword(String password) {
+        wait.until(ExpectedConditions.visibilityOf(PasswordField));
         PasswordField.sendKeys(password);
     }
 
     public void clickLoginSubmitButton() {
+        wait.until(ExpectedConditions.elementToBeClickable(LoginSubmitButton));
         LoginSubmitButton.click();
     }
 
