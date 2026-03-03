@@ -1,9 +1,10 @@
 package Base;
 
+import PageObjects.LoginPage;
 import Utilities.BrowserFactory;
 import org.openqa.selenium.WebDriver;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 
 public class BaseTest {
 
@@ -11,13 +12,17 @@ public class BaseTest {
     public final String url = "https://ndosisimplifiedautomation.vercel.app/";
     public final String browserChoice = "chrome";
 
-    @BeforeMethod
-    public void setUpBrowser(){
-        browser.startBrowser(browserChoice,url);
+    public WebDriver driver;
+    public LoginPage loginPage;
+
+    @BeforeClass
+    public void setUpBrowser() {
+        driver = browser.startBrowser(browserChoice, url);
+        loginPage = new LoginPage(driver);
     }
 
-    @AfterMethod
-    public void tearDownBrowser(){
+    @AfterClass
+    public void tearDownBrowser() {
         browser.closeBrowser();
     }
 }
