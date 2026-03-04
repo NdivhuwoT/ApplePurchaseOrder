@@ -82,6 +82,44 @@ public class ReadXSLData {
         fileInputStream.close();
         return testData;
     }
+
+    @DataProvider(name = "ExtraData")
+    public Object[][] getExtraData() throws IOException {
+        String filePath = "/src/test/resources/TestData/TestData.xlsx";
+        String sheetName = "ExtraData";
+
+        File file = new File(System.getProperty("user.dir") + filePath);
+        if (!file.exists()) {
+            throw new FileNotFoundException("Test data file not found at: " + file.getAbsolutePath());
+        }
+
+        FileInputStream fileInputStream = new FileInputStream(file);
+        Workbook workbook = WorkbookFactory.create(fileInputStream);
+        Sheet sheet = workbook.getSheet(sheetName);
+        //check if sheet exists
+        if (sheet == null) {
+            workbook.close();
+            fileInputStream.close();
+            throw new IllegalArgumentException("Sheet '" + sheetName + "' not found in workbook");
+        }
+
+        int totalRows = sheet.getLastRowNum();
+        int totalCols = sheet.getRow(0).getLastCellNum();
+
+        DataFormatter formatter = new DataFormatter();
+        String[][] testData = new String[totalRows][totalCols];
+
+        for (int i = 1; i <= totalRows; i++) {
+            Row row = sheet.getRow(i);
+            for (int j = 0; j < totalCols; j++) {
+                testData[i - 1][j] = formatter.formatCellValue(row.getCell(j));
+            }
+        }
+        workbook.close();
+        fileInputStream.close();
+        return testData;
+    }
+
 }
 
 

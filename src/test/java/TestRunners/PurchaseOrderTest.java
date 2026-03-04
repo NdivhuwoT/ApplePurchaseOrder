@@ -19,13 +19,23 @@ public class PurchaseOrderTest extends BaseTest {
     public void inventoryForm(String deviceType, String brand, String storage, String color, int quantity, String address) {
         inventoryFormPage.clickLearnButton();
         inventoryFormPage.clickLearnMaterialButton();
+        inventoryFormPage.clickWebAutomationButton();
         inventoryFormPage.verifyInventoryForm();
-        inventoryFormPage.chooseDeviceType(deviceType);
-        inventoryFormPage.chooseBrand(brand);
+        inventoryFormPage.selectDeviceType(deviceType);
+        inventoryFormPage.selectBrand(brand);
         inventoryFormPage.chooseStorage(storage);
-        inventoryFormPage.chooseColor(color);
+        inventoryFormPage.selectColor(color);
         inventoryFormPage.enterQuantity(quantity);
         inventoryFormPage.enterAddress(address);
         inventoryFormPage.clickInventoryNextButton();
+    }
+
+    @Test(dataProviderClass = ReadXSLData.class, dataProvider = "ExtraData")
+    public void extraData(String shipping, String warranty, String discount, String purchaseConfirmation) {
+        inventoryFormPage.chooseShipping(shipping);
+        inventoryFormPage.chooseWarranty(warranty);
+        inventoryFormPage.enterDiscountCode(discount);
+        inventoryFormPage.clickConfirmPurchaseButton();
+        inventoryFormPage.alertVerifySuccessfulPurchase(purchaseConfirmation);
     }
 }

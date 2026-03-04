@@ -78,14 +78,17 @@ public class InventoryFormPage {
     @FindBy(id = "discount-code")
     WebElement DiscountCodeInputField;
 
+    @FindBy(id = "apply-discount-btn")
+    WebElement ApplyDiscountButton;
+
     @FindBy(id = "breakdown-total-value")
     WebElement TotalValue; //This will be used for Validations
 
     @FindBy(id = "purchase-device-btn")
     WebElement ConfirmPurchaseButton;
 
-    @FindBy(xpath = "//p[@style = 'font-weight: 700; font-size: 0.85rem; color: rgb(14, 116, 144); margin-bottom: 6px;']")
-    WebElement SuccessfulPurchaseAlertMessage; //This will be used for Validations
+    @FindBy(xpath = "//h4[@style = \"color: rgb(22, 163, 74); margin: 0px;\"]")
+    WebElement SuccessfulPurchaseAlertTitle; //This will be used for Validations
 
     @FindBy(id = "view-history-btn")
     WebElement ViewInvoiceButton;
@@ -118,7 +121,7 @@ public class InventoryFormPage {
         }
     }
 
-    public void chooseDeviceType(String deviceType) {
+    public void selectDeviceType(String deviceType) {
 
         switch (deviceType.toLowerCase()) {
             case "phone", "laptop", "tablet" -> {
@@ -133,7 +136,7 @@ public class InventoryFormPage {
         }
     }
 
-    public void chooseBrand(String brand) {
+    public void selectBrand(String brand) {
 
         switch (brand.toLowerCase()) {
             case "apple", "samsung", "xiaomi", "other" -> {
@@ -171,7 +174,7 @@ public class InventoryFormPage {
         }
     }
 
-    public void chooseColor(String color) {
+    public void selectColor(String color) {
 
         switch (color.toLowerCase()) {
             case "black", "white", "blue", "gold" -> {
@@ -207,7 +210,7 @@ public class InventoryFormPage {
     }
 
     //Extras Method and data sheetname to be created for these methods
-    public void chooseExpressShipping(String shippingOption) {
+    public void chooseShipping(String shippingOption) {
 
         double shippingCost = 25.00;
         String beforeShippingTotal = TotalValue.getText().replace("R", ""); // Get the total value before selecting shipping option
@@ -271,7 +274,20 @@ public class InventoryFormPage {
     public void enterDiscountCode(String discountCode) {
         wait.until(ExpectedConditions.visibilityOf(DiscountCodeInputField));
         DiscountCodeInputField.clear();
-        DiscountCodeInputField.sendKeys(discountCode);
+        DiscountCodeInputField.sendKeys(discountCode.toUpperCase());
+
+        String totalValueBeforeDiscount = TotalValue.getText().replace("R", ""); // Get the total value before applying discount
+            if (discountCode.equalsIgnoreCase("SAVE10")) {
+                double expectedTotalValue = Double.parseDouble(totalValueBeforeDiscount) * 0.90; // Apply 10% discount
+                ApplyDiscountButton.click();
+                Assert.assertEquals(Double.parseDouble(TotalValue.getText().replace("R", "")), expectedTotalValue, "Total value calculation with DISCOUNT10 is incorrect.");
+            } else if (discountCode.equalsIgnoreCase("SAVE20")) {
+                double expectedTotalValue = Double.parseDouble(totalValueBeforeDiscount) * 0.80; // Apply 20% discount
+                ApplyDiscountButton.click();
+                Assert.assertEquals(Double.parseDouble(TotalValue.getText().replace("R", "")), expectedTotalValue, "Total value calculation with DISCOUNT20 is incorrect.");
+            } else {
+                throw new IllegalArgumentException("Invalid discount code: " + discountCode);// This will throw an exception if an invalid discount code is provided.
+            }
     }
 
     public void clickConfirmPurchaseButton() {
@@ -279,9 +295,11 @@ public class InventoryFormPage {
         ConfirmPurchaseButton.click();
     }
 
-    public void verifySuccessfulPurchase() {
-        wait.until(ExpectedConditions.visibilityOf(SuccessfulPurchaseAlertMessage));
-        Assert.assertTrue(SuccessfulPurchaseAlertMessage.isDisplayed(), "Successful purchase alert message is not displayed.");
+    public void alertVerifySuccessfulPurchase(String purchasedAlertMessage) {
+        wait.until(ExpectedConditions.alertIsPresent());
+        driver.switchTo().alert();
+        String alertTitle = SuccessfulPurchaseAlertTitle.getText();
+        Assert.assertEquals(alertTitle, purchasedAlertMessage, "Successful purchase alert message is incorrect.");
     }
 
     public void clickViewInvoiceButton() {
