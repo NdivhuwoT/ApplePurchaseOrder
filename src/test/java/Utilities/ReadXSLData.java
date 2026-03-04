@@ -3,15 +3,12 @@ package Utilities;
 import org.apache.poi.ss.usermodel.*;
 import org.testng.annotations.DataProvider;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 
 public class ReadXSLData {
 
-    @DataProvider(name = "testData")
-    public String[][] getData() throws IOException {
+    @DataProvider(name = "Credential")
+    public Object[][] getCredentialData() throws IOException {
         String filePath = "/src/test/resources/TestData/TestData.xlsx";
         String sheetName = "Credential";
 
@@ -35,7 +32,7 @@ public class ReadXSLData {
         int totalCols = sheet.getRow(0).getLastCellNum(); // Get the number of columns from the header row
 
         DataFormatter formatter = new DataFormatter(); // Create a DataFormatter to convert cell values to String
-        String testData[][] = new String[totalRows][totalCols]; // Initialize a 2D array to hold the test data
+        String[][] testData = new String[totalRows][totalCols]; // Initialize a 2D array to hold the test data
 
         for (int i = 1; i <= totalRows; i++) { // Start from 1 to skip header row
             Row row = sheet.getRow(i); // Get the current row
@@ -48,4 +45,43 @@ public class ReadXSLData {
         return testData; // Return the populated test data array
 
     }
+
+    @DataProvider(name = "InventoryData")
+    public Object[][] getInventoryData() throws IOException {
+        String filePath = "/src/test/resources/TestData/TestData.xlsx";
+        String sheetName = "InventoryData";
+
+        File file = new File(System.getProperty("user.dir") + filePath);
+        if (!file.exists()) {
+            throw new FileNotFoundException("Test data file not found at: " + file.getAbsolutePath());
+        }
+
+        FileInputStream fileInputStream = new FileInputStream(file);
+        Workbook workbook = WorkbookFactory.create(fileInputStream);
+        Sheet sheet = workbook.getSheet(sheetName);
+        //check if sheet exists
+        if (sheet == null) {
+            workbook.close();
+            fileInputStream.close();
+            throw new IllegalArgumentException("Sheet '" + sheetName + "' not found in workbook");
+        }
+
+        int totalRows = sheet.getLastRowNum();
+        int totalCols = sheet.getRow(0).getLastCellNum();
+
+        DataFormatter formatter = new DataFormatter();
+        String[][] testData = new String[totalRows][totalCols];
+
+        for (int i = 1; i <= totalRows; i++) {
+            Row row = sheet.getRow(i);
+            for (int j = 0; j < totalCols; j++) {
+                testData[i - 1][j] = formatter.formatCellValue(row.getCell(j));
+            }
+        }
+        workbook.close();
+        fileInputStream.close();
+        return testData;
+    }
 }
+
+

@@ -1,5 +1,6 @@
 package Base;
 
+import PageObjects.InventoryFormPage;
 import PageObjects.LoginPage;
 import Utilities.BrowserFactory;
 import org.openqa.selenium.WebDriver;
@@ -14,11 +15,13 @@ public class BaseTest {
 
     public WebDriver driver;
     public LoginPage loginPage;
+    public InventoryFormPage inventoryFormPage;
 
     @BeforeClass
     public void setUpBrowser() {
         driver = browser.startBrowser(browserChoice, url);
         loginPage = new LoginPage(driver);
+        inventoryFormPage = new InventoryFormPage(driver);
     }
 
     @AfterClass
