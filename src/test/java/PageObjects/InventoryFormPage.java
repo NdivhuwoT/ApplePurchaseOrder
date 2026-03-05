@@ -14,14 +14,6 @@ public class InventoryFormPage {
     public static WebDriver driver;
     public static WebDriverWait wait;
 
-    // Helper method for JavaScript click
-    private void jsClick(WebElement element) {
-        ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
-    }
-
-    public String PhonePrice64GB = "R400.00";
-    public String PhonePrice128GB = "R480.00";
-    public String PhonePrice256GB = "R560.00";
 
     public InventoryFormPage(WebDriver driver) {
         this.driver = driver;
@@ -102,7 +94,7 @@ public class InventoryFormPage {
     @FindBy(xpath = "//*[contains(text(),'Order Successful!')]")
     WebElement SuccessfulPurchaseAlertTitle; //This will be used for Validations
 
-    @FindBy(id = "view-history-btn")
+    @FindBy(xpath = "//button[@title='View Invoice History']")
     WebElement ViewInvoiceButton;
 
     @FindBy(id = "invoice-history-title")
@@ -164,6 +156,10 @@ public class InventoryFormPage {
     }
 
     public void chooseStorage(String storage) {
+
+        String PhonePrice64GB = "R400.00";
+        String PhonePrice128GB = "R480.00";
+        String PhonePrice256GB = "R560.00";
 
         switch (storage.toUpperCase()) {
             case "64GB" -> {
@@ -265,15 +261,13 @@ public class InventoryFormPage {
                 wait.until(ExpectedConditions.elementToBeClickable(NoWarrantyRadioButton));
                 NoWarrantyRadioButton.click();
             }
-            default ->
-                    throw new IllegalArgumentException("Invalid warranty option: " + warranty);// This will throw an
+            default -> throw new IllegalArgumentException("Invalid warranty option: " + warranty);// This will throw an
         }
 
         if (OneYearWarrantyRadioButton.isSelected()) {
             double totalValue = Double.parseDouble(beforeWarrantyTotal) + oneYearWarrantyCost;
             Assert.assertEquals(Double.parseDouble(TotalValue.getText().replace("R", "")), totalValue, "Total value calculation with 1 year warranty is incorrect.");
-        }
-        else if (warranty.equalsIgnoreCase("2 year")) {
+        } else if (warranty.equalsIgnoreCase("2 year")) {
             double totalValue = Double.parseDouble(beforeWarrantyTotal) + twoYearWarrantyCost;
             Assert.assertEquals(Double.parseDouble(TotalValue.getText().replace("R", "")), totalValue, "Total value calculation with 2 year warranty is incorrect.");
         }
@@ -286,17 +280,17 @@ public class InventoryFormPage {
         DiscountCodeInputField.sendKeys(discountCode.toUpperCase());
 
         String totalValueBeforeDiscount = TotalValue.getText().replace("R", ""); // Get the total value before applying discount
-            if (discountCode.equalsIgnoreCase("SAVE10")) {
-                double expectedTotalValue = Double.parseDouble(totalValueBeforeDiscount) * 0.90; // Apply 10% discount
-                ApplyDiscountButton.click();
-                Assert.assertEquals(Double.parseDouble(TotalValue.getText().replace("R", "")), expectedTotalValue, "Total value calculation with DISCOUNT10 is incorrect.");
-            } else if (discountCode.equalsIgnoreCase("SAVE20")) {
-                double expectedTotalValue = Double.parseDouble(totalValueBeforeDiscount) * 0.80; // Apply 20% discount
-                ApplyDiscountButton.click();
-                Assert.assertEquals(Double.parseDouble(TotalValue.getText().replace("R", "")), expectedTotalValue, "Total value calculation with DISCOUNT20 is incorrect.");
-            } else {
-                throw new IllegalArgumentException("Invalid discount code: " + discountCode);// This will throw an exception if an invalid discount code is provided.
-            }
+        if (discountCode.equalsIgnoreCase("SAVE10")) {
+            double expectedTotalValue = Double.parseDouble(totalValueBeforeDiscount) * 0.90; // Apply 10% discount
+            ApplyDiscountButton.click();
+            Assert.assertEquals(Double.parseDouble(TotalValue.getText().replace("R", "")), expectedTotalValue, "Total value calculation with DISCOUNT10 is incorrect.");
+        } else if (discountCode.equalsIgnoreCase("SAVE20")) {
+            double expectedTotalValue = Double.parseDouble(totalValueBeforeDiscount) * 0.80; // Apply 20% discount
+            ApplyDiscountButton.click();
+            Assert.assertEquals(Double.parseDouble(TotalValue.getText().replace("R", "")), expectedTotalValue, "Total value calculation with DISCOUNT20 is incorrect.");
+        } else {
+            throw new IllegalArgumentException("Invalid discount code: " + discountCode);// This will throw an exception if an invalid discount code is provided.
+        }
     }
 
     public void clickConfirmPurchaseButton() {
@@ -312,7 +306,7 @@ public class InventoryFormPage {
 
     public void clickViewInvoiceButton() {
         wait.until(ExpectedConditions.elementToBeClickable(ViewInvoiceButton));
-        jsClick(ViewInvoiceButton);
+        ViewInvoiceButton.click();
     }
 
     public void verifyInvoiceHistoryPage() {
