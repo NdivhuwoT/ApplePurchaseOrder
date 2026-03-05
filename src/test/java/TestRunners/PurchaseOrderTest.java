@@ -15,7 +15,7 @@ public class PurchaseOrderTest extends BaseTest {
         loginPage.verifySuccessfullLogin();
     }
 
-    @Test(dataProviderClass =  ReadXSLData.class, dataProvider = "InventoryData")
+    @Test(dataProviderClass =  ReadXSLData.class, dataProvider = "InventoryData", priority = 1)
     public void inventoryForm(String deviceType, String brand, String storage, String color, int quantity, String address) {
         inventoryFormPage.clickLearnButton();
         inventoryFormPage.clickLearnMaterialButton();
@@ -30,12 +30,16 @@ public class PurchaseOrderTest extends BaseTest {
         inventoryFormPage.clickInventoryNextButton();
     }
 
-    @Test(dataProviderClass = ReadXSLData.class, dataProvider = "ExtraData")
+    @Test(dataProviderClass = ReadXSLData.class, dataProvider = "ExtraData", priority = 2)
     public void extraData(String shipping, String warranty, String discount, String purchaseConfirmation) {
         inventoryFormPage.chooseShipping(shipping);
         inventoryFormPage.chooseWarranty(warranty);
         inventoryFormPage.enterDiscountCode(discount);
         inventoryFormPage.clickConfirmPurchaseButton();
         inventoryFormPage.alertVerifySuccessfulPurchase(purchaseConfirmation);
+        inventoryFormPage.clickViewInvoiceButton();
+        inventoryFormPage.verifyInvoiceHistoryPage();
+        inventoryFormPage.clickView();
+
     }
 }

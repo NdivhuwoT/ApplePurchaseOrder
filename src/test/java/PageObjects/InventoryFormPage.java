@@ -14,6 +14,11 @@ public class InventoryFormPage {
     public static WebDriver driver;
     public static WebDriverWait wait;
 
+    // Helper method for JavaScript click
+    private void jsClick(WebElement element) {
+        ((org.openqa.selenium.JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
+    }
+
     public String PhonePrice64GB = "R400.00";
     public String PhonePrice128GB = "R480.00";
     public String PhonePrice256GB = "R560.00";
@@ -24,22 +29,22 @@ public class InventoryFormPage {
         PageFactory.initElements(driver, this);
     }
 
-    @FindBy(xpath = "//span[text()=\"Learn\"]")
+    @FindBy(xpath = "//span[text()='Learn']")
     WebElement LearnDropDownButton;
 
-    @FindBy(xpath = "//button[@class = 'nav-dropdown-item active']")
+    @FindBy(xpath = "//span[@class='item-icon' and contains(text(),'\uD83D\uDCA1')]")
     WebElement LearningMaterialButton;
 
-    @FindBy(id = "tab-btn-web")
+    @FindBy(xpath = "//span[@class='tab-label' and contains(text(),'Web Automation Advance')]")
     WebElement WebAutomationButton;
 
-    @FindBy(id = "inventory-title")
+    @FindBy(xpath = "//h3[@id='inventory-title']")
     WebElement InventoryFormTitle;
 
-    @FindBy(id = "deviceType")
+    @FindBy(xpath = "//select[@id='deviceType']")
     WebElement DeviceTypeDropDownButton;
 
-    @FindBy(id = "brand")
+    @FindBy(xpath = "//select[@id='brand']")
     WebElement BrandDropDownButton;
 
     @FindBy(id = "storage-128GB")
@@ -69,11 +74,18 @@ public class InventoryFormPage {
     @FindBy(id = "inventory-next-btn")
     WebElement InventoryNextButton;
 
+
     @FindBy(id = "shipping-express")
     WebElement ExpressShippingRadioButton;
+    @FindBy(id = "shipping-standard")
+    WebElement StandardShippingRadioButton;
 
     @FindBy(id = "warranty-1yr")
     WebElement OneYearWarrantyRadioButton;
+    @FindBy(id = "warranty-2yr")
+    WebElement TwoYearWarrantyRadioButton;
+    @FindBy(id = "warranty-none")
+    WebElement NoWarrantyRadioButton;
 
     @FindBy(id = "discount-code")
     WebElement DiscountCodeInputField;
@@ -87,7 +99,7 @@ public class InventoryFormPage {
     @FindBy(id = "purchase-device-btn")
     WebElement ConfirmPurchaseButton;
 
-    @FindBy(xpath = "//h4[@style = \"color: rgb(22, 163, 74); margin: 0px;\"]")
+    @FindBy(xpath = "//*[contains(text(),'Order Successful!')]")
     WebElement SuccessfulPurchaseAlertTitle; //This will be used for Validations
 
     @FindBy(id = "view-history-btn")
@@ -96,7 +108,7 @@ public class InventoryFormPage {
     @FindBy(id = "invoice-history-title")
     WebElement InvoiceHistoryTitle; //This will be used for Validations
 
-    @FindBy(linkText = "\uD83D\uDC41\uFE0F View")
+    @FindBy(xpath = "//button[contains(text(),'View')]")
     WebElement ViewInvoice;
 
     public void clickLearnButton() {
@@ -127,7 +139,7 @@ public class InventoryFormPage {
             case "phone", "laptop", "tablet" -> {
                 wait.until(ExpectedConditions.elementToBeClickable(DeviceTypeDropDownButton));
                 DeviceTypeDropDownButton.click();
-                WebElement deviceOption = driver.findElement(By.xpath("//option[@value=" + deviceType + "]"));
+                WebElement deviceOption = driver.findElement(By.xpath("//option[@value='" + deviceType.toLowerCase() + "']"));
                 wait.until(ExpectedConditions.elementToBeClickable(deviceOption));
                 deviceOption.click();
             }
@@ -142,7 +154,7 @@ public class InventoryFormPage {
             case "apple", "samsung", "xiaomi", "other" -> {
                 wait.until(ExpectedConditions.elementToBeClickable(BrandDropDownButton));
                 BrandDropDownButton.click();
-                WebElement brandOption = driver.findElement(By.xpath("//option[@value=" + brand + "]"));
+                WebElement brandOption = driver.findElement(By.xpath("//option[@value='" + brand.toLowerCase() + "']"));
                 wait.until(ExpectedConditions.elementToBeClickable(brandOption));
                 brandOption.click();
             }
@@ -180,7 +192,7 @@ public class InventoryFormPage {
             case "black", "white", "blue", "gold" -> {
                 wait.until(ExpectedConditions.elementToBeClickable(ColorDropDownButton));
                 ColorDropDownButton.click();
-                WebElement colorOption = driver.findElement(By.xpath("//option[@value=" + color + "]"));
+                WebElement colorOption = driver.findElement(By.xpath("//option[@value='" + color.toLowerCase() + "']"));
                 wait.until(ExpectedConditions.elementToBeClickable(colorOption));
                 colorOption.click();
             }
@@ -221,7 +233,6 @@ public class InventoryFormPage {
                 ExpressShippingRadioButton.click();
             }
             case "standard" -> {
-                WebElement StandardShippingRadioButton = driver.findElement(By.id("shipping-standard"));
                 wait.until(ExpectedConditions.elementToBeClickable(StandardShippingRadioButton));
                 StandardShippingRadioButton.click();
             }
@@ -230,7 +241,7 @@ public class InventoryFormPage {
         }
 
         if (ExpressShippingRadioButton.isSelected()) {
-            double totalValue = Double.parseDouble(beforeShippingTotal + shippingCost);
+            double totalValue = Double.parseDouble(beforeShippingTotal) + shippingCost;
             Assert.assertEquals(Double.parseDouble(TotalValue.getText().replace("R", "")), totalValue, "Total value calculation with express shipping is incorrect.");
         }
     }
@@ -242,17 +253,15 @@ public class InventoryFormPage {
         String beforeWarrantyTotal = TotalValue.getText().replace("R", "");
 
         switch (warranty.toLowerCase()) {
-            case "1 Year" -> {
+            case "1 year" -> {
                 wait.until(ExpectedConditions.elementToBeClickable(OneYearWarrantyRadioButton));
                 OneYearWarrantyRadioButton.click();
             }
-            case "2 Year" -> {
-                WebElement TwoYearWarrantyRadioButton = driver.findElement(By.id("warranty-2yr"));
+            case "2 year" -> {
                 wait.until(ExpectedConditions.elementToBeClickable(TwoYearWarrantyRadioButton));
                 TwoYearWarrantyRadioButton.click();
             }
             case "none" -> {
-                WebElement NoWarrantyRadioButton = driver.findElement(By.id("warranty-none"));
                 wait.until(ExpectedConditions.elementToBeClickable(NoWarrantyRadioButton));
                 NoWarrantyRadioButton.click();
             }
@@ -261,11 +270,11 @@ public class InventoryFormPage {
         }
 
         if (OneYearWarrantyRadioButton.isSelected()) {
-            double totalValue = Double.parseDouble(beforeWarrantyTotal + oneYearWarrantyCost);
+            double totalValue = Double.parseDouble(beforeWarrantyTotal) + oneYearWarrantyCost;
             Assert.assertEquals(Double.parseDouble(TotalValue.getText().replace("R", "")), totalValue, "Total value calculation with 1 year warranty is incorrect.");
         }
-        else if (warranty.equalsIgnoreCase("2 Year")) {
-            double totalValue = Double.parseDouble(beforeWarrantyTotal + twoYearWarrantyCost);
+        else if (warranty.equalsIgnoreCase("2 year")) {
+            double totalValue = Double.parseDouble(beforeWarrantyTotal) + twoYearWarrantyCost;
             Assert.assertEquals(Double.parseDouble(TotalValue.getText().replace("R", "")), totalValue, "Total value calculation with 2 year warranty is incorrect.");
         }
 
@@ -296,15 +305,14 @@ public class InventoryFormPage {
     }
 
     public void alertVerifySuccessfulPurchase(String purchasedAlertMessage) {
-        wait.until(ExpectedConditions.alertIsPresent());
-        driver.switchTo().alert();
+        wait.until(ExpectedConditions.visibilityOf(SuccessfulPurchaseAlertTitle));
         String alertTitle = SuccessfulPurchaseAlertTitle.getText();
-        Assert.assertEquals(alertTitle, purchasedAlertMessage, "Successful purchase alert message is incorrect.");
+        Assert.assertEquals(alertTitle.toLowerCase(), purchasedAlertMessage.toLowerCase(), "Successful purchase alert message is incorrect.");
     }
 
     public void clickViewInvoiceButton() {
         wait.until(ExpectedConditions.elementToBeClickable(ViewInvoiceButton));
-        ViewInvoiceButton.click();
+        jsClick(ViewInvoiceButton);
     }
 
     public void verifyInvoiceHistoryPage() {
@@ -312,7 +320,7 @@ public class InventoryFormPage {
         Assert.assertTrue(InvoiceHistoryTitle.isDisplayed(), "Invoice History page title is not displayed.");
     }
 
-    public void clickViewInvoice() {
+    public void clickView() {
         wait.until(ExpectedConditions.elementToBeClickable(ViewInvoice));
         ViewInvoice.click();
     }

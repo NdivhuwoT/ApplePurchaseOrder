@@ -70,12 +70,18 @@ public class ReadXSLData {
         int totalCols = sheet.getRow(0).getLastCellNum();
 
         DataFormatter formatter = new DataFormatter();
-        String[][] testData = new String[totalRows][totalCols];
+        Object[][] testData = new Object[totalRows][totalCols];
 
         for (int i = 1; i <= totalRows; i++) {
             Row row = sheet.getRow(i);
             for (int j = 0; j < totalCols; j++) {
-                testData[i - 1][j] = formatter.formatCellValue(row.getCell(j));
+                Cell cell = row.getCell(j);
+                // Column 4 (index 4) is quantity, which should be an int
+                if (j == 4) {
+                    testData[i - 1][j] = (int) cell.getNumericCellValue();
+                } else {
+                    testData[i - 1][j] = formatter.formatCellValue(cell);
+                }
             }
         }
         workbook.close();
