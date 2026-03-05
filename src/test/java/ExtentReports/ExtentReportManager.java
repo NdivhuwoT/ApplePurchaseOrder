@@ -22,7 +22,7 @@ public class ExtentReportManager {
         extentSparkReporter.config().setReportName("Apple Purchase Order Test Report");
 
         extentReports.setSystemInfo("OS", System.getProperty("os.name"));
-        extentReports.setSystemInfo("Execution Machine", System.getProperty("machine.name"));
+        extentReports.setSystemInfo("Execution Machine", System.getProperty("user.name"));
 
         return extentReports;
     }

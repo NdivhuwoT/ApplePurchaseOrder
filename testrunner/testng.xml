@@ -1,0 +1,11 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Apple Purchase Order Test Suite">
+    <listeners>
+        <listener class-name="ExtentReports.Listener"/>
+    </listeners>
+    <test name="Apple Purchase Order Test">
+        <classes>
+            <class name="Test.PurchaseOrderTest"/>
+        </classes>
+    </test>
+</suite>
