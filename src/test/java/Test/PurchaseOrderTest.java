@@ -1,4 +1,4 @@
-package TestRunners;
+package Test;
 
 import Base.BaseTest;
 import Utilities.ReadXSLData;
